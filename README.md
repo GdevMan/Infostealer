@@ -1,2 +1,2 @@
 # Infostealer
-An info stealer i made for EDUCATIONAL purposesONLY
+An info stealer i made for EDUCATIONAL purposes ONLY
